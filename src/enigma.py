@@ -39,7 +39,6 @@ class Enigma:
             for i in range(len(self.rotor_list)):
                 self.rotor_list[i].rotate(3)
                 if self.rotor_list[i].is_latch:
-                    print(i)
                     continue
                 else:
                     break
@@ -96,21 +95,31 @@ if __name__ == "__main__":
     # make rotor instance
     l1 = list(string.ascii_lowercase)
     random.shuffle(l1)
+    r1 = Rotor(1, l1, 3)
+
     l2 = list(string.ascii_lowercase)
     random.shuffle(l2)
-    r1 = Rotor(1, l1, 3)
     r2 = Rotor(3, l2, 12)
-    rotor_list = [r1, r2]
+
+    l3 = list(string.ascii_lowercase)
+    random.shuffle(l3)
+    r3 = Rotor(5, l3, 21)
+
+    rotor_list = [r1, r2, r3]
     import copy
 
     enigma = Enigma(rotor_list)
 
     enigma2 = Enigma(copy.deepcopy(rotor_list))
 
-    plain_text = "abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    plain_text = "qweqwealicewasbeginningtogetverytiredofsittingbyhersisteronthebank"
 
     ciphertext = enigma.encrypt(plain_text)
+    decrypttext = enigma2.decrypt(ciphertext)
     print(plain_text)
+    # qfeqhdnlywedasblldxzruatocwmvirytghagofsptucvgbaharnwjtexontwearrk
     print(ciphertext)
-    print(enigma2.decrypt(ciphertext))
+    print(decrypttext)
+
+    assert plain_text == decrypttext
 
