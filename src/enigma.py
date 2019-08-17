@@ -19,21 +19,15 @@ class Enigma:
 
         l = list(string.ascii_lowercase)
         random.shuffle(l)
-
         self.conversion_dic = dict()
+
         for i, x in enumerate(l):
             self.conversion_dic[string.ascii_lowercase[i]] = x
-        self.reverse_conversion_dic = {v: k for k, v in self.conversion_dic.items()}
 
-    def encrypt(self, plaintext: str) -> str:
-        return self.reflect(plaintext, True)
+    def encrypt(self, plaintext: str, f=False) -> str:
+        ciptext = ""
+        for s in plaintext:
 
-    def decrypt(self, ciptext: str) -> str:
-        return self.reflect(ciptext, False)
-
-    def reflect(self, text: str, is_encrypt: bool) -> str:
-        new_text = ""
-        for s in text:
             # Rotate Rotor
             self.rotor_list[0].shift()
             if self.rotor_list[0].is_latch:
@@ -42,19 +36,19 @@ class Enigma:
             # Foward
             z = self.rotor_list[0].convert(s, reverse=False)
             z = self.rotor_list[1].convert(z, reverse=False)
-
             # Reflect
-            if is_encrypt:
+            if f:
                 z = self.conversion_dic[z]
             else:
-                z = self.reverse_conversion_dic[z]
+                reverse_conversion_dic = {v: k for k, v in self.conversion_dic.items()}
+                z = reverse_conversion_dic[z]
 
             # Reverse
             z = self.rotor_list[1].convert(z, reverse=True)
             z = self.rotor_list[0].convert(z, reverse=True)
 
-            new_text += z
-        return new_text
+            ciptext += z
+        return ciptext
 
 
 class Rotor:
@@ -64,12 +58,19 @@ class Rotor:
         self.position = initial_position
         self.latch_position = latch_position
         self.conversion_list = conversion_list
+        """
+        self.conversion_dic = dict()
+        for i, s in enumerate(conversion_list):
+            self.conversion_dic[string.ascii_lowercase[i]] = s
+        self.reverse_conversion_dic = {v: k for k, v in self.conversion_dic.items()}
+        """
 
     def convert(self, s: str, reverse=False) -> str:
         def shift(seq, n):
             return seq[n:] + seq[:n]
 
         l = shift(self.conversion_list, self.position)
+
         conversion_dic = dict()
         for i, x in enumerate(l):
             conversion_dic[string.ascii_lowercase[i]] = x
@@ -96,8 +97,8 @@ if __name__ == "__main__":
     enigma_copy = copy.deepcopy(enigma)
     plain_text = "abc"
 
-    ciphertext = enigma.encrypt(plain_text)
+    ciphertext = enigma.encrypt(plain_text, False)
     print(plain_text)
     print(ciphertext)
-    print(enigma_copy.encrypt(ciphertext))
+    print(enigma_copy.encrypt(ciphertext, True))
 
