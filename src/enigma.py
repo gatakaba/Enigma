@@ -36,24 +36,29 @@ class Enigma:
         new_text = ""
         for s in plaintext:
             # Rotate Rotor
-            self.rotor_list[0].rotate()
-            if self.rotor_list[0].is_latch:
-                self.rotor_list[1].rotate()
+            for i in range(len(self.rotor_list)):
+                self.rotor_list[i].rotate(3)
+                if self.rotor_list[i].is_latch:
+                    print(i)
+                    continue
+                else:
+                    break
 
             # Foward
-            z = self.rotor_list[0].convert(s, reverse=False)
-            z = self.rotor_list[1].convert(z, reverse=False)
+            for rotor in self.rotor_list:
+                s = rotor.convert(s, reverse=False)
+
             # Reflect
-            if is_decrypt:
-                z = self.conversion_dic[z]
+            if not is_decrypt:
+                s = self.conversion_dic[s]
             else:
-                z = self.reverse_conversion_dic[z]
+                s = self.reverse_conversion_dic[s]
 
             # Reverse
-            z = self.rotor_list[1].convert(z, reverse=True)
-            z = self.rotor_list[0].convert(z, reverse=True)
+            for rotor in self.rotor_list[::-1]:
+                s = rotor.convert(s, reverse=True)
 
-            new_text += z
+            new_text += s
         return new_text
 
 
@@ -83,10 +88,8 @@ class Rotor:
 
     def rotate(self, n=1):
         self.position += n
-
-    @property
-    def is_latch(self) -> bool:
-        return self.position == self.latch_position
+        self.is_latch = self.position > self.latch_position
+        self.position = self.position % 26
 
 
 if __name__ == "__main__":
@@ -104,7 +107,7 @@ if __name__ == "__main__":
 
     enigma2 = Enigma(copy.deepcopy(rotor_list))
 
-    plain_text = "abcaaaaaaaa"
+    plain_text = "abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
     ciphertext = enigma.encrypt(plain_text)
     print(plain_text)
