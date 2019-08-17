@@ -31,7 +31,7 @@ class Enigma:
     def decrypt(self, ciptext):
         return self.reflect(ciptext, True)
 
-    def reflect(self, plaintext: str, is_encrypt=False) -> str:
+    def reflect(self, plaintext: str, is_decrypt=False) -> str:
         ciptext = ""
         for s in plaintext:
             # Rotate Rotor
@@ -43,7 +43,7 @@ class Enigma:
             z = self.rotor_list[0].convert(s, reverse=False)
             z = self.rotor_list[1].convert(z, reverse=False)
             # Reflect
-            if is_encrypt:
+            if is_decrypt:
                 z = self.conversion_dic[z]
             else:
                 z = self.reverse_conversion_dic[z]
@@ -63,12 +63,6 @@ class Rotor:
         self.position = initial_position
         self.latch_position = latch_position
         self.conversion_list = conversion_list
-        """
-        self.conversion_dic = dict()
-        for i, s in enumerate(conversion_list):
-            self.conversion_dic[string.ascii_lowercase[i]] = s
-        self.reverse_conversion_dic = {v: k for k, v in self.conversion_dic.items()}
-        """
 
     def convert(self, s: str, reverse=False) -> str:
         def shift(seq, n):
