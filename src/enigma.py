@@ -6,19 +6,17 @@ random.seed(0)
 
 
 class Enigma:
-    def __init__(self):
-        l1 = list(string.ascii_lowercase)
-        random.shuffle(l1)
-
-        l2 = list(string.ascii_lowercase)
-        random.shuffle(l2)
-
-        r1 = Rotor(1, l1, 3)
-        r2 = Rotor(3, l2, 3)
-        self.rotor_list = [r1, r2]
-
+    def __init__(self, rotor_list):
+        self.rotor_list = rotor_list
+        # set reflector parameter
         l = list(string.ascii_lowercase)
-        random.shuffle(l)
+        l[8], l[7] = l[7], l[8]
+        l[4], l[24] = l[24], l[4]
+        l[12], l[2] = l[2], l[12]
+        l[21], l[11] = l[11], l[21]
+        l[18], l[6] = l[6], l[18]
+        l[15], l[3] = l[3], l[15]
+
         self.conversion_dic = dict()
 
         for i, x in enumerate(l):
@@ -32,7 +30,7 @@ class Enigma:
         return self.reflect(ciptext, True)
 
     def reflect(self, plaintext: str, is_decrypt=False) -> str:
-        ciptext = ""
+        new_text = ""
         for s in plaintext:
             # Rotate Rotor
             self.rotor_list[0].rotate()
@@ -52,8 +50,8 @@ class Enigma:
             z = self.rotor_list[1].convert(z, reverse=True)
             z = self.rotor_list[0].convert(z, reverse=True)
 
-            ciptext += z
-        return ciptext
+            new_text += z
+        return new_text
 
 
 class Rotor:
@@ -90,11 +88,20 @@ class Rotor:
 
 
 if __name__ == "__main__":
-    enigma = Enigma()
+    # make rotor instance
+    l1 = list(string.ascii_lowercase)
+    random.shuffle(l1)
+    l2 = list(string.ascii_lowercase)
+    random.shuffle(l2)
+    r1 = Rotor(1, l1, 3)
+    r2 = Rotor(3, l2, 3)
+    rotor_list = [r1, r2]
+
+    enigma = Enigma(rotor_list)
     import copy
 
     enigma_copy = copy.deepcopy(enigma)
-    plain_text = "abc"
+    plain_text = "abcaaaaaaaa"
 
     ciphertext = enigma.encrypt(plain_text)
     print(plain_text)
