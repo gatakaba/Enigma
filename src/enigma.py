@@ -25,7 +25,13 @@ class Enigma:
             self.conversion_dic[string.ascii_lowercase[i]] = x
         self.reverse_conversion_dic = {v: k for k, v in self.conversion_dic.items()}
 
-    def encrypt(self, plaintext: str, is_encrypt=False) -> str:
+    def encrypt(self, plaintext):
+        return self.reflect(plaintext, False)
+
+    def decrypt(self, ciptext):
+        return self.reflect(ciptext, True)
+
+    def reflect(self, plaintext: str, is_encrypt=False) -> str:
         ciptext = ""
         for s in plaintext:
             # Rotate Rotor
@@ -96,8 +102,8 @@ if __name__ == "__main__":
     enigma_copy = copy.deepcopy(enigma)
     plain_text = "abc"
 
-    ciphertext = enigma.encrypt(plain_text, False)
+    ciphertext = enigma.encrypt(plain_text)
     print(plain_text)
     print(ciphertext)
-    print(enigma_copy.encrypt(ciphertext, True))
+    print(enigma_copy.decrypt(ciphertext))
 
