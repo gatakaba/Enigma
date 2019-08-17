@@ -10,13 +10,16 @@ class Enigma:
         self.rotor_list = rotor_list
         # set reflector parameter
         l = list(string.ascii_lowercase)
+        l[1], l[3] = l[3], l[1]
+        l[0], l[5] = l[5], l[0]
+        l[2], l[7] = l[7], l[2]
+        l[3], l[8] = l[8], l[3]
         l[8], l[7] = l[7], l[8]
         l[4], l[24] = l[24], l[4]
         l[12], l[2] = l[2], l[12]
         l[21], l[11] = l[11], l[21]
         l[18], l[6] = l[6], l[18]
         l[15], l[3] = l[3], l[15]
-
         self.conversion_dic = dict()
 
         for i, x in enumerate(l):
@@ -75,7 +78,6 @@ class Rotor:
 
         if not reverse:
             return conversion_dic[s]
-
         else:
             return reverse_conversion_dic[s]
 
@@ -94,17 +96,18 @@ if __name__ == "__main__":
     l2 = list(string.ascii_lowercase)
     random.shuffle(l2)
     r1 = Rotor(1, l1, 3)
-    r2 = Rotor(3, l2, 3)
+    r2 = Rotor(3, l2, 12)
     rotor_list = [r1, r2]
-
-    enigma = Enigma(rotor_list)
     import copy
 
-    enigma_copy = copy.deepcopy(enigma)
+    enigma = Enigma(rotor_list)
+
+    enigma2 = Enigma(copy.deepcopy(rotor_list))
+
     plain_text = "abcaaaaaaaa"
 
     ciphertext = enigma.encrypt(plain_text)
     print(plain_text)
     print(ciphertext)
-    print(enigma_copy.decrypt(ciphertext))
+    print(enigma2.decrypt(ciphertext))
 
