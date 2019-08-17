@@ -8,23 +8,24 @@ random.seed(0)
 class Enigma:
     def __init__(self):
         l1 = list(string.ascii_lowercase)
-        random.shuffle(l1)
+        # random.shuffle(l1)
 
         l2 = list(string.ascii_lowercase)
-        random.shuffle(l2)
+        # random.shuffle(l2)
 
         r1 = Rotor(0, l1, 3)
-        r2 = Rotor(4, l2, 3)
+        r2 = Rotor(0, l2, 3)
         self.rotor_list = [r1, r2]
 
     def encrypt(self, plaintext: str) -> str:
         ciptext = ""
         for s in plaintext:
             # Rotate Rotor
+            """
             self.rotor_list[0].shift()
             if self.rotor_list[0].is_latch:
                 self.rotor_list[1].shift()
-
+            """
             # Foward
             z = self.rotor_list[0].convert(s)
             z = self.rotor_list[1].convert(z)
@@ -39,13 +40,17 @@ class Rotor:
     def __init__(
         self, initial_position: int, conversion_list: list, latch_position: int
     ):
+        self.position = initial_position
         self.conversion_list = conversion_list
         self.latch_position = latch_position
-        self.position = initial_position
 
-    def convert(self, s: str) -> str:
-        index = ord(s) - 97
-        return self.conversion_list[index]
+    def convert(self, s: str, reverse=False) -> str:
+        if not reverse:
+            index = ord(s) - 97
+            index = (index + self.latch_position) % len(self.conversion_list)
+            return self.conversion_list[index]
+        else:
+            pass
 
     def shift(self, n=1):
         self.position += n
@@ -58,4 +63,13 @@ class Rotor:
 
 if __name__ == "__main__":
     enigma = Enigma()
-    print(enigma.encrypt("aaaaaaaaaaa"))
+    import copy
+
+    enigma_copy = copy.deepcopy(enigma)
+    plain_text = "helloworld"
+
+    ciphertext = enigma.encrypt(plain_text)
+    print(plain_text)
+    print(ciphertext)
+    print(enigma_copy.encrypt(ciphertext))
+
