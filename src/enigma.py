@@ -35,9 +35,9 @@ class Enigma:
         ciptext = ""
         for s in plaintext:
             # Rotate Rotor
-            self.rotor_list[0].shift()
+            self.rotor_list[0].rotate()
             if self.rotor_list[0].is_latch:
-                self.rotor_list[1].shift()
+                self.rotor_list[1].rotate()
 
             # Foward
             z = self.rotor_list[0].convert(s, reverse=False)
@@ -81,7 +81,7 @@ class Rotor:
         else:
             return reverse_conversion_dic[s]
 
-    def shift(self, n=1):
+    def rotate(self, n=1):
         self.position += n
 
     @property
